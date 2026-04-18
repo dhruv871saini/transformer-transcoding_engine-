@@ -1,5 +1,5 @@
 import amqp from 'amqplib'
-import transcode from '../controller/transcoderController.js';
+import transcodeHandler from '../controller/transcoderController.js';
 
 let channel, connection;
 const connectChannel = async () => {
@@ -10,7 +10,8 @@ const connectChannel = async () => {
         console.log("channel connected -------");
 
     } catch (error) {
-        console.log("error in connectChannel ::", error)
+        console.log("error in connectChannel ::", error);
+        process.exit(1);
     }
 }
 
@@ -30,8 +31,10 @@ const sendData = async (data) => {
         )
 
         console.log("video added in queue")
+        console.log("data::sendData",data)
     } catch (error) {
         console.log("error in sendData func", error)
+        process.exit(1);
     }
 }
 
@@ -40,8 +43,8 @@ const  receiveData = async()=> {
   if (msg.content) {
     try {
       const data = JSON.parse(msg.content.toString());
-
-      await transcode(data); // wait for processing
+        console.log("data.uploadedVideopath",data)
+      await transcodeHandler(data); // wait for processing
 
       channel.ack(msg); // ack ONLY after success
     } catch (error) {

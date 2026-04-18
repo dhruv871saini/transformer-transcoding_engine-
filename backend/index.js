@@ -17,9 +17,12 @@ app.get("/", (req, res) => {
 app.listen(port, async () => {
   try {
     await config.dbConnect();
+    await config.rabbitMQConfig.connectChannel();
     logger.info("Connected successfully");
     logger.info(`Server running on port ${port}`);
+    await config.rabbitMQConfig.receiveData();
   } catch (error) {
     logger.error(`Connection failed: ${error.message}`);
+    process.exit(1);
   }
 });

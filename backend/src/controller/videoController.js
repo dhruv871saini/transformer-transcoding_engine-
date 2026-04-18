@@ -18,12 +18,15 @@ const videoController = {
         videoId,
       });
       const video = createdVideo.save();
+      if(!uploadedVideoPath){
+        return res.status(400).json({ message: "Video not provided" });
+      }
+      console.log("uploadvideopath",uploadedVideoPath)
       const toTranscode ={
         data:{
           videoId,
           uploadedVideoPath
         },
-        action:"TRANSCODE"
       }
 
 
