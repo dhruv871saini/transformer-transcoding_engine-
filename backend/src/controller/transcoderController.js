@@ -1,10 +1,15 @@
 import { exec } from "child_process";
 import fs from "fs";
 import transcodeModel from "../model/transcode.model.js";
-// import { FFmpeg } from "@ffmpeg/ffmpeg";
+import { logger } from "../../logger.js";
+
 const transcodeHandler = async (data) => {
+  const { videoId, uploadedVideoPath } = data?.data ?? {};
+  if (!videoId || !uploadedVideoPath) {
+    throw new Error("Invalid transcode payload: videoId and uploadedVideoPath required");
+  }
+
   try {
-    const { videoId, uploadedVideoPath } = data.data;
     console.log("uploadVideoPath", uploadedVideoPath);
     const outputFolderRootPath = `./hls-outputs/${videoId}`;
 
@@ -86,11 +91,15 @@ const transcodeHandler = async (data) => {
       },
     );
 
-    console.log("complete transcode video");
+    logger.info(`Transcode completed for ${videoId}`);
     return { success: true };
   } catch (error) {
-    console.log("error in transcodeHandler func", error);
-    process.exit(1);
+    logger.error(`Transcode failed for ${videoId}: ${error?.message || error}`);
+    await transcodeModel.updateOne(
+      { videoId },
+      { $set: { status: "failed" } },
+    );
+    throw error;
   }
 };
 

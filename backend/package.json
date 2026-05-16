@@ -11,6 +11,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "cors": "^2.8.5",
     "@ffmpeg/ffmpeg": "^0.12.15",
     "amqplib": "^1.0.3",
     "dotenv": "^17.4.1",

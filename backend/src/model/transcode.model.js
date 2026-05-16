@@ -13,7 +13,7 @@ const transcodeSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "completed"],
+      enum: ["pending", "completed", "failed"],
       default: "pending",
     },
   },
